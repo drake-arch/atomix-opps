@@ -7,93 +7,382 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    body { background:#0b0f14; color:#EDEFED }
-    .glass {
-      background: rgba(255,255,255,.05);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255,255,255,.12);
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-18px); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .gradient-bg {
+      background: linear-gradient(-45deg, #0D2D53, #1a4d7a, #0D2D53, #164a6e);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+    }
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(163, 243, 197, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(163, 243, 197, 0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    .floating { animation: float 6s ease-in-out infinite; }
+    .fade-in-up { animation: fadeInUp 0.8s ease-out forwards; }
+    .scale-in { animation: scaleIn 0.5s ease-out forwards; }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.10);
+    }
+    .glow { box-shadow: 0 0 30px rgba(163, 243, 197, 0.25); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #A3F3C5 0%, #7de0a8 100%);
+      color: #0D2D53;
+      font-weight: 650;
+      transition: all 0.25s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 40px rgba(163, 243, 197, 0.35);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #EDEFED;
+      border: 1px solid rgba(163, 243, 197, 0.25);
+      transition: all 0.25s ease;
+    }
+    .btn-secondary:hover {
+      background: rgba(163, 243, 197, 0.10);
+      border-color: rgba(163, 243, 197, 0.55);
+    }
+
+    /* ===== FIX INVISIBLE TYPING + COOL GLASS INPUTS ===== */
     input, select, textarea {
-      background: rgba(13,45,83,.4)!important;
-      color:#EDEFED!important;
-      caret-color:#A3F3C5!important;
-      border:1px solid rgba(163,243,197,.3)!important;
+      background: rgba(13, 45, 83, 0.35) !important;
+      color: #EDEFED !important;
+      caret-color: #A3F3C5 !important;
+      border: 1px solid rgba(163, 243, 197, 0.25) !important;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+      transition: all 0.25s ease;
     }
     input::placeholder, textarea::placeholder {
-      color: rgba(237,239,237,.55);
+      color: rgba(237, 239, 237, 0.55) !important;
+    }
+    select option {
+      background: #0D2D53 !important;
+      color: #EDEFED !important;
     }
     input:focus, select:focus, textarea:focus {
-      outline:none!important;
-      box-shadow:0 0 0 4px rgba(163,243,197,.15);
+      outline: none !important;
+      border-color: rgba(163, 243, 197, 0.75) !important;
+      box-shadow: 0 0 0 4px rgba(163, 243, 197, 0.12),
+                  0 0 30px rgba(163, 243, 197, 0.18) !important;
     }
-    select option { background:#0D2D53; color:#EDEFED }
-    .btn {
-      background:linear-gradient(135deg,#A3F3C5,#7de0a8);
-      color:#0D2D53;
-      font-weight:600;
+
+    select {
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, rgba(237,239,237,0.9) 50%),
+        linear-gradient(135deg, rgba(237,239,237,0.9) 50%, transparent 50%);
+      background-position:
+        calc(100% - 22px) calc(50% - 3px),
+        calc(100% - 16px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 44px !important;
     }
   </style>
 </head>
 
-<body class="flex items-center justify-center min-h-screen px-6">
+<body class="bg-[#101314] text-[#EDEFED] overflow-x-hidden">
+  <div class="min-h-screen gradient-bg grid-bg relative overflow-hidden">
+    <div class="absolute top-20 left-10 w-72 h-72 bg-[#A3F3C5] opacity-10 rounded-full blur-3xl floating"></div>
+    <div class="absolute bottom-20 right-10 w-96 h-96 bg-[#A3F3C5] opacity-10 rounded-full blur-3xl floating" style="animation-delay:-3s;"></div>
 
-<div class="max-w-3xl w-full glass rounded-3xl p-10">
+    <div class="relative z-10 flex items-center justify-center min-h-screen px-6 py-20">
+      <div class="max-w-4xl w-full">
 
-<h1 class="text-5xl mb-8 text-center">PBIN Error</h1>
+        <!-- Initial Selection Screen -->
+        <div id="initialScreen" class="text-center fade-in-up">
+          <div class="inline-block px-6 py-2 glass rounded-full text-[#A3F3C5] text-lg font-medium tracking-widest uppercase mb-8 glow">
+            Error Tracking System
+          </div>
 
-<form id="form" class="space-y-6">
+          <h1 class="text-7xl md:text-8xl font-extralight leading-none tracking-tight mb-8 bg-gradient-to-r from-white to-[#A3F3C5] bg-clip-text text-transparent">
+            Report<br/>Error
+          </h1>
 
-  <input id="binNumber" required placeholder="Bin Number" class="w-full p-4 rounded-xl" />
+          <p class="text-2xl text-[#9D9F9E] max-w-2xl mx-auto mb-16 font-light leading-relaxed">
+            Select bin type to begin
+          </p>
 
-  <select id="issueType" required class="w-full p-4 rounded-xl">
-    <option value="">Issue Type</option>
-    <option>Overage</option>
-    <option>Shortage</option>
-    <option>Wrong Item</option>
-    <option>Missing Item</option>
-  </select>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 scale-in">
+            <button onclick="selectBinType('ebin')" class="glass rounded-3xl p-12 text-left hover:border-[#A3F3C5] hover:bg-[#1e2223] transition-all group transform hover:scale-[1.02] glow">
+              <div class="text-center">
+                <div class="text-6xl font-extralight mb-4 group-hover:text-[#A3F3C5] transition-colors">EBIN</div>
+                <div class="text-[#9D9F9E] text-lg font-light">Quick capture</div>
+              </div>
+            </button>
 
-  <input id="wrongLocation" required placeholder="Wrong Location" class="w-full p-4 rounded-xl" />
-  <input id="correctLocation" required placeholder="Correct Location" class="w-full p-4 rounded-xl" />
-  <input id="pickerName" required placeholder="Picker Name" class="w-full p-4 rounded-xl" />
-  <textarea id="notes" placeholder="Notes (optional)" class="w-full p-4 rounded-xl"></textarea>
+            <button onclick="selectBinType('pbin')" class="glass rounded-3xl p-12 text-left hover:border-[#A3F3C5] hover:bg-[#1e2223] transition-all group transform hover:scale-[1.02] glow">
+              <div class="text-center">
+                <div class="text-6xl font-extralight mb-4 group-hover:text-[#A3F3C5] transition-colors">PBIN</div>
+                <div class="text-[#9D9F9E] text-lg font-light">Detailed report</div>
+              </div>
+            </button>
+          </div>
 
-  <button class="btn w-full py-4 rounded-xl text-lg">Submit</button>
+          <button onclick="goHome()" class="mt-12 text-[#9D9F9E] hover:text-[#A3F3C5] transition-colors text-lg">
+            ← Back to Home
+          </button>
+        </div>
 
-</form>
+        <!-- EBIN Form -->
+        <div id="ebinForm" class="hidden fade-in-up">
+          <div class="text-center mb-12">
+            <div class="inline-block px-6 py-2 glass rounded-full text-[#A3F3C5] text-sm font-medium tracking-widest uppercase mb-6">
+              EBIN Error
+            </div>
+            <h2 class="text-5xl font-extralight mb-4">Quick Capture</h2>
+            <p class="text-[#9D9F9E]">Enter bin number to log error</p>
+          </div>
 
-<p id="status" class="text-center mt-4"></p>
-</div>
+          <div class="glass rounded-3xl p-10 max-w-2xl mx-auto">
+            <form id="ebinFormElement" class="space-y-6">
+              <div>
+                <label class="block text-sm font-medium text-[#A3F3C5] mb-3 tracking-wide">BIN NUMBER</label>
+                <input type="text" id="ebinNumber" required
+                       class="w-full px-6 py-4 rounded-xl text-xl tracking-wider"
+                       placeholder="Enter bin number">
+              </div>
 
-<script>
-/* 🔴 REPLACE THIS AFTER DEPLOYING APPS SCRIPT */
-const GOOGLE_SCRIPT_URL = "PASTE_WEB_APP_EXEC_URL_HERE";
+              <div class="flex gap-4 pt-4">
+                <button id="ebinSubmit" type="submit" class="flex-1 btn-primary py-4 rounded-xl text-lg">
+                  Submit Error
+                </button>
+                <button type="button" onclick="resetForm()" class="btn-secondary px-8 py-4 rounded-xl text-lg">
+                  Cancel
+                </button>
+              </div>
 
-document.getElementById("form").addEventListener("submit", async e => {
-  e.preventDefault();
-  document.getElementById("status").textContent = "Submitting...";
+              <div id="ebinStatus" class="text-sm text-[#9D9F9E]"></div>
+            </form>
+          </div>
+        </div>
 
-  const data = {
-    timestamp: new Date().toISOString(),
-    binType: "PBIN",
-    binNumber: binNumber.value,
-    issueType: issueType.value,
-    wrongLocation: wrongLocation.value,
-    correctLocation: correctLocation.value,
-    pickerName: pickerName.value,
-    additionalNotes: notes.value || "N/A"
-  };
+        <!-- PBIN Form -->
+        <div id="pbinForm" class="hidden fade-in-up">
+          <div class="text-center mb-12">
+            <div class="inline-block px-6 py-2 glass rounded-full text-[#A3F3C5] text-sm font-medium tracking-widest uppercase mb-6">
+              PBIN Error
+            </div>
+            <h2 class="text-5xl font-extralight mb-4">Detailed Report</h2>
+            <p class="text-[#9D9F9E]">Complete error details</p>
+          </div>
 
-  await fetch(GOOGLE_SCRIPT_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify(data)
-  });
+          <div class="glass rounded-3xl p-10 max-w-3xl mx-auto">
+            <form id="pbinFormElement" class="space-y-8">
 
-  document.getElementById("status").textContent = "✅ Submitted";
-  e.target.reset();
-});
-</script>
+              <div>
+                <label class="block text-sm font-medium text-[#A3F3C5] mb-3 tracking-wide">BIN NUMBER</label>
+                <input type="text" id="pbinNumber" required
+                       class="w-full px-6 py-4 rounded-xl text-xl tracking-wider"
+                       placeholder="Enter bin number">
+              </div>
 
+              <div>
+                <label class="block text-sm font-medium text-[#A3F3C5] mb-3 tracking-wide">WHAT IS THE ISSUE?</label>
+                <select id="issueType" required class="w-full px-6 py-4 rounded-xl text-lg">
+                  <option value="">Select issue type...</option>
+                  <option value="overage">Overage</option>
+                  <option value="shortage">Shortage</option>
+                  <option value="wrong_item">Wrong Item</option>
+                  <option value="missing_item">Missing Item</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-[#A3F3C5] mb-3 tracking-wide">WHERE WAS THE WRONG ITEM PICKED FROM?</label>
+                <input type="text" id="wrongLocation" required
+                       class="w-full px-6 py-4 rounded-xl"
+                       placeholder="Enter location">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-[#A3F3C5] mb-3 tracking-wide">WHERE SHOULD THEY HAVE PICKED FROM?</label>
+                <input type="text" id="correctLocation" required
+                       class="w-full px-6 py-4 rounded-xl"
+                       placeholder="Enter correct location">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-[#A3F3C5] mb-3 tracking-wide">WHO WAS THE PICKER?</label>
+                <input type="text" id="pickerName" required
+                       class="w-full px-6 py-4 rounded-xl"
+                       placeholder="Enter picker name">
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-[#A3F3C5] mb-3 tracking-wide">ADDITIONAL NOTES (Optional)</label>
+                <textarea id="additionalNotes" rows="4"
+                          class="w-full px-6 py-4 rounded-xl resize-none"
+                          placeholder="Any additional information..."></textarea>
+              </div>
+
+              <div class="flex gap-4 pt-4">
+                <button id="pbinSubmit" type="submit" class="flex-1 btn-primary py-4 rounded-xl text-lg">
+                  Submit Error Report
+                </button>
+                <button type="button" onclick="resetForm()" class="btn-secondary px-8 py-4 rounded-xl text-lg">
+                  Cancel
+                </button>
+              </div>
+
+              <div id="pbinStatus" class="text-sm text-[#9D9F9E]"></div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="hidden fade-in-up text-center">
+          <div class="glass rounded-3xl p-16 max-w-2xl mx-auto glow">
+            <div class="text-[#A3F3C5] text-8xl mb-6">✓</div>
+            <h2 class="text-5xl font-extralight mb-4">Error Logged</h2>
+            <p class="text-[#9D9F9E] text-xl mb-8">Your report has been submitted successfully</p>
+            <button onclick="resetForm()" class="btn-primary px-12 py-4 rounded-xl text-lg">
+              Report Another Error
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ✅ Your Apps Script Web App URL (already filled in)
+    const GOOGLE_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycby-pkRrLVOYsDpQXW-7HC7qgMP8cqL7zKdswYYZXwW_IRmHPpVN4eeCuhgA94MUeu2kxw/exec";
+
+    let currentBinType = null;
+
+    function selectBinType(type) {
+      currentBinType = type;
+      document.getElementById('initialScreen').classList.add('hidden');
+
+      if (type === 'ebin') {
+        document.getElementById('ebinForm').classList.remove('hidden');
+        setTimeout(() => document.getElementById('ebinNumber')?.focus(), 50);
+      } else {
+        document.getElementById('pbinForm').classList.remove('hidden');
+        setTimeout(() => document.getElementById('pbinNumber')?.focus(), 50);
+      }
+    }
+
+    function resetForm() {
+      document.getElementById('initialScreen').classList.remove('hidden');
+      document.getElementById('ebinForm').classList.add('hidden');
+      document.getElementById('pbinForm').classList.add('hidden');
+      document.getElementById('successMessage').classList.add('hidden');
+
+      document.getElementById('ebinFormElement').reset();
+      document.getElementById('pbinFormElement').reset();
+
+      document.getElementById('ebinStatus').textContent = '';
+      document.getElementById('pbinStatus').textContent = '';
+      currentBinType = null;
+    }
+
+    function goHome() {
+      window.location.href = 'https://drake-arch.github.io/atomix-opps/';
+    }
+
+    function showSuccess() {
+      document.getElementById('ebinForm').classList.add('hidden');
+      document.getElementById('pbinForm').classList.add('hidden');
+      document.getElementById('successMessage').classList.remove('hidden');
+    }
+
+    function setLoading(btnId, statusId, on, msg) {
+      const btn = document.getElementById(btnId);
+      const status = document.getElementById(statusId);
+      if (!btn || !status) return;
+
+      if (on) {
+        btn.disabled = true;
+        btn.dataset.original = btn.innerHTML;
+        btn.innerHTML = 'Submitting...';
+        btn.style.opacity = '0.65';
+        status.textContent = msg || '';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = btn.dataset.original || btn.innerHTML;
+        btn.style.opacity = '1';
+        status.textContent = msg || '';
+      }
+    }
+
+    async function submitToGoogleSheet(data, btnId, statusId) {
+      setLoading(btnId, statusId, true, 'Sending to sheet...');
+
+      try {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify(data)
+        });
+
+        setLoading(btnId, statusId, false, '');
+        showSuccess();
+      } catch (err) {
+        console.error(err);
+        setLoading(btnId, statusId, false, 'Error sending. Check Apps Script deployment.');
+        alert('Submit failed. Check Apps Script deployment + Executions log.');
+      }
+    }
+
+    document.getElementById('ebinFormElement').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const data = {
+        timestamp: new Date().toISOString(),
+        binType: 'EBIN',
+        binNumber: document.getElementById('ebinNumber').value.trim(),
+        issueType: 'N/A',
+        wrongLocation: 'N/A',
+        correctLocation: 'N/A',
+        pickerName: 'N/A',
+        additionalNotes: 'N/A'
+      };
+      await submitToGoogleSheet(data, 'ebinSubmit', 'ebinStatus');
+    });
+
+    document.getElementById('pbinFormElement').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const data = {
+        timestamp: new Date().toISOString(),
+        binType: 'PBIN',
+        binNumber: document.getElementById('pbinNumber').value.trim(),
+        issueType: document.getElementById('issueType').value,
+        wrongLocation: document.getElementById('wrongLocation').value.trim(),
+        correctLocation: document.getElementById('correctLocation').value.trim(),
+        pickerName: document.getElementById('pickerName').value.trim(),
+        additionalNotes: (document.getElementById('additionalNotes').value || '').trim() || 'N/A'
+      };
+      await submitToGoogleSheet(data, 'pbinSubmit', 'pbinStatus');
+    });
+  </script>
 </body>
 </html>
